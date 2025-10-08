@@ -5,16 +5,26 @@ pipeline {
         }
     }
 
+    environment {
+        PATH = "$PATH:~/.local/bin"
+    }
+
     stages {
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh '''
+                    echo "=== Installing dependencies ==="
+                    pip install --user -r requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'pytest test_app.py'
+                sh '''
+                    echo "=== Running tests ==="
+                    pytest test_app.py
+                '''
             }
         }
 
@@ -35,7 +45,7 @@ pipeline {
         success {
             script {
                 def payload = [
-                    content: "✅ Build SUCCESS on `${env.BRANCH_NAME}`\nURL: ${env.BUILD_URL}"
+                    content: "✅ **Build SUCCESS** on `${env.BRANCH_NAME}`\n🔗 ${env.BUILD_URL}"
                 ]
                 httpRequest(
                     httpMode: 'POST',
@@ -49,7 +59,7 @@ pipeline {
         failure {
             script {
                 def payload = [
-                    content: "❌ Build FAILED on `${env.BRANCH_NAME}`\nURL: ${env.BUILD_URL}"
+                    content: "❌ **Build FAILED** on `${env.BRANCH_NAME}`\n🔗 ${env.BUILD_URL}"
                 ]
                 httpRequest(
                     httpMode: 'POST',
