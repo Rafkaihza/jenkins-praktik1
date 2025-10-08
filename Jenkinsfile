@@ -1,9 +1,10 @@
-agent {
-    docker {
-        image 'python:3.10'
-        args '-u root'
+pipeline {
+    agent {
+        docker {
+            image 'python:3.10'
+            args '-u root'
+        }
     }
-}
 
     environment {
         PATH = "$PATH:~/.local/bin"
@@ -14,7 +15,7 @@ agent {
             steps {
                 sh '''
                     echo "=== Installing dependencies ==="
-                    sh 'pip install -r requirements.txt'
+                    pip install -r requirements.txt
                 '''
             }
         }
@@ -45,7 +46,7 @@ agent {
         success {
             script {
                 def payload = [
-                    content: "✅ **Build SUCCESS** on `${env.BRANCH_NAME}`\n🔗 ${env.BUILD_URL}"
+                    content: "✅ **Build SUCCESS** on `${env.BRANCH_NAME}`\\n🔗 ${env.BUILD_URL}"
                 ]
                 httpRequest(
                     httpMode: 'POST',
@@ -59,7 +60,7 @@ agent {
         failure {
             script {
                 def payload = [
-                    content: "❌ **Build FAILED** on `${env.BRANCH_NAME}`\n🔗 ${env.BUILD_URL}"
+                    content: "❌ **Build FAILED** on `${env.BRANCH_NAME}`\\n🔗 ${env.BUILD_URL}"
                 ]
                 httpRequest(
                     httpMode: 'POST',
