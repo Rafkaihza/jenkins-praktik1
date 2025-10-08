@@ -1,9 +1,9 @@
-pipeline {
-    agent {
-        docker {
-            image 'python:3.10'
-        }
+agent {
+    docker {
+        image 'python:3.10'
+        args '-u root'
     }
+}
 
     environment {
         PATH = "$PATH:~/.local/bin"
@@ -14,7 +14,7 @@ pipeline {
             steps {
                 sh '''
                     echo "=== Installing dependencies ==="
-                    pip install --user -r requirements.txt
+                    sh 'pip install -r requirements.txt'
                 '''
             }
         }
